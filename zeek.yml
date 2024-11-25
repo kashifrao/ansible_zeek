@@ -1,0 +1,44 @@
+
+    - name: "Install Zeek yum packages"
+      yum:
+        name:
+          - cmake
+          - make
+          - gcc
+          - gcc-c++
+          - flex
+          - bison
+          - libpcap-devel
+          - openssl-devel
+          - swig
+          - zlib-devel
+          - cmake3
+        state: present
+      become: yes
+      become_user: root
+
+    - name: Creates directory
+      ansible.builtin.file:
+        path: /usr/src/zeek
+        state: directory
+        owner: ansible-c
+        group: ans-admin
+        mode: 0775
+      become_user: root
+
+    - name: "Copy Zeek tar.gz from storage "
+      shell: if [ ! -f /usr/src/zeek/zeek-4.2.0/zeek-config.in ]; then sudo cp -r /srv/shared-mgmt/external-softwares/zeek-4.2.0.tar.gz /usr/src/zeek/ ; else echo "" ; fi
+      become_user: root
+
+    - name: "Untar .gz file"
+      shell: if [ ! -f /usr/src/zeek/zeek-4.2.0/zeek-config.in ]; then sudo tar -zxvf /usr/src/zeek/zeek-4.2.0.tar.gz -C /usr/src/zeek/  ; else echo "" ; fi
+      become_user: root
+
+    - name: "Change directory to Zeek "
+      shell: if [ ! -f /usr/src/zeek/zeek-4.2.0/zeek-config.in ]; then cd /usr/src/zeek/zeek-4.2.0/  ; else echo "" ; fi
+      become_user: root
+
+    - name: Install Zeek
+      shell: if [ ! -f /usr/src/zeek/zeek-4.2.0/zeek-config.in ]; then ./configure && make && sudo make install ; else echo "" ; fi
+      become_user: root
+
